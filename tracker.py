@@ -35,9 +35,10 @@ def checkPrice(**data_dict):
 
         # percentage discount
         data_dict["per_savings"] = float(data_dict["savings"][start+1:stop])
-        print(data_dict["per_savings"])
+        print("Discount available:", data_dict["per_savings"])
     except:
         print("No discount is currently available!")
+        data_dict["savings"] = "\nNo savings at the moment."
         data_dict["per_savings"] = 0
 
     if data_dict["per_savings"] >= data_dict["discount"]:
@@ -56,7 +57,7 @@ def sendEmail(**data_dict):
     """
     Sends email from user's email ID to themself.
 
-    Paramter:
+    Parameter:
     **data_dict (dict): Dictionary containing user data
     """
     # login to email
@@ -64,7 +65,7 @@ def sendEmail(**data_dict):
 
     # write the email subject and body
     subject = "PRICE DROP: \"" + \
-        data_dict["title"] + "\" available now for GBP " + \
+        data_dict["title"][:30] + "...\" available now for GBP " + \
         str(data_dict["price"])
 
     body = "The following product that you were interested in is now available at a discount!" +\
