@@ -9,6 +9,15 @@ from helper import getTime, inputDetails, login
 
 
 def checkPrice(**data_dict):
+    """
+    Checks the price of the product and sends email if discount is sufficient.
+
+    Parameter:
+    **data_dict (dict): Dictionary containing user data
+
+    Returns: 
+    data_dict (dict): Updated dictionary containing user data
+    """
     headers = {}
     headers["User-Agent"] = data_dict["user_agent"]
     page = requests.get(data_dict["URL"], headers=headers)
@@ -18,17 +27,18 @@ def checkPrice(**data_dict):
     data_dict["price"] = float(
         soup.find(id="priceblock_ourprice").get_text()[1:])
 
-    savings = soup.find(id="regularprice_savings").get_text()
-    if savings == None:
-        print("No discount is currently available!")
-        data_dict["per_savings"] = 0
-    else:
+    try:
+        savings = soup.find(id="regularprice_savings").get_text()
         data_dict["savings"] = savings.replace("£", "GBP ")
         start = data_dict["savings"].index("(")
         stop = data_dict["savings"].index("%")
 
         # percentage discount
         data_dict["per_savings"] = float(data_dict["savings"][start+1:stop])
+        print(data_dict["per_savings"])
+    except:
+        print("No discount is currently available!")
+        data_dict["per_savings"] = 0
 
     if data_dict["per_savings"] >= data_dict["discount"]:
         # send email if discount criteria is met
@@ -43,7 +53,16 @@ def checkPrice(**data_dict):
 
 
 def sendEmail(**data_dict):
+    """
+    Sends email from user's email ID to themself.
+
+    Paramter:
+    **data_dict (dict): Dictionary containing user data
+    """
+    # login to email
     server = login(data_dict["username"], data_dict["password"])
+
+    # write the email subject and body
     subject = "PRICE DROP: \"" + \
         data_dict["title"] + "\" available now for GBP " + \
         str(data_dict["price"])
@@ -54,8 +73,10 @@ def sendEmail(**data_dict):
         data_dict["savings"] + \
         "\nCheck out this link:\n" + data_dict["URL"]
 
+    # form the email message
     msg = "Subject: {0}\n\n{1}".format(subject, body)
 
+    # send the message using the SMTP object, server
     server.sendmail(data_dict["username"], data_dict["username"], msg)
 
     # exit from loop in __main__ if email is sent
@@ -67,12 +88,14 @@ def sendEmail(**data_dict):
 
 if __name__ == "__main__":
     data_dict = inputDetails()
+    # get the frequency of price checks
     s = getTime(data_dict["often"])
 
-    iters = 0
+    iters = 0  # counts the number of price checks done
     while(True):
         iters += 1
         print("\nCheck #", iters, "on:", datetime.today())
+        # check if the price has dropped
         data_dict = checkPrice(**data_dict)
         print("Price will be checked every " + s)
         time.sleep(data_dict["often"])
