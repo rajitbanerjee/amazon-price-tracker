@@ -35,7 +35,7 @@ def checkPrice(**data_dict):
 
         # percentage discount
         data_dict["per_savings"] = float(data_dict["savings"][start+1:stop])
-        print("Discount available:", data_dict["per_savings"])
+        print("Discount available:", data_dict["per_savings"], "%")
     except:
         print("No discount is currently available!")
         data_dict["savings"] = "\nNo savings at the moment."
