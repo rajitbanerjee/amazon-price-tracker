@@ -1,0 +1,4 @@
+{
+    "price_id": ["priceblock_ourprice", "priceblock_dealprice"],
+    "savings_id": ["regularprice_savings", "dealprice_savings"]
+}

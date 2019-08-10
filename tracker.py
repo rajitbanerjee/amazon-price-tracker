@@ -5,6 +5,7 @@ import requests
 from bs4 import BeautifulSoup
 
 import helper
+import json
 
 
 def checkPrice(data_dict):
@@ -18,19 +19,34 @@ def checkPrice(data_dict):
     headers["User-Agent"] = data_dict["user_agent"]
     page = requests.get(data_dict["URL"], headers=headers)
 
+    json_file = open("details.json", "r+")
+    json_data = json.load(json_file) 
+
     soup = BeautifulSoup(page.content, "html.parser")
     data_dict["title"] = soup.find(id="productTitle").get_text().strip()
-    data_dict["price"] = float(
-        soup.find(id="priceblock_ourprice").get_text()[1:])
 
+    for id in json_data["price_id"]:
+        try:
+            data_dict["price"] = float(
+                soup.find(id=id).get_text()[1:])
+            break
+        except:
+            pass
+            
     try:
-        savings = soup.find(id="regularprice_savings").get_text()
+        for id in json_data["savings_id"]:
+            try:
+                savings = soup.find(id=id).get_text()
+                break
+            except:
+                pass
+
         data_dict["savings"] = savings.replace("£", "GBP ")
         start = data_dict["savings"].index("(")
         stop = data_dict["savings"].index("%")
 
         # percentage discount
-        data_dict["per_savings"] = float(data_dict["savings"][start+1:stop])
+        data_dict["per_savings"] = float(data_dict["savings"][start + 1: stop])
         print("Discount available:", data_dict["per_savings"], "%")
     except:
         print("No discount is currently available!")
@@ -45,6 +61,8 @@ def checkPrice(data_dict):
         print("\nSorry, the product isn't available at the desired price!")
         print("NAME:", data_dict["title"])
         print("CURRENT PRICE: GBP", data_dict["price"], "\n")
+
+    json_file.close()
 
 
 def sendEmail(data_dict):

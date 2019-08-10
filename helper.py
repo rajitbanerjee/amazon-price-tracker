@@ -11,7 +11,7 @@ def inputDetails():
         data_dict (dict): Dictionary containing user data
     """
     data_dict = {}
-    with open("user_details.json", "r+") as json_file:
+    with open("details.json", "r+") as json_file:
         json_data = json.load(json_file)
         if "user_agent" in json_data:
             data_dict["user_agent"] = json_data["user_agent"]
