@@ -1,5 +1,5 @@
 # Amazon Price Tracker
-A basic web scraping project in Python 3. 
+A simple web scraping project in Python 3. 
 * Track the price of an item on [Amazon UK](https://www.amazon.co.uk/) and get an email (only Gmail supported now) when the price
 of the product drops and is available at a discounted rate!
 * Written for fun after watching a basic YouTube [tutorial](https://www.youtube.com/watch?v=Bg9r_yLk7VY&t=1s) by 
@@ -8,7 +8,6 @@ of the product drops and is available at a discounted rate!
 * Either ONE of the following:
    1. Allow Less Secure Apps on your Google Account
    2. Enable Two-Factor Authentication, and generate a new app password for Mail
-* Python 3, in case you don't have it already.
 * Get `pip` ([more info](https://www.makeuseof.com/tag/install-pip-for-python/))
-* Download `bs4` and `requests` using `pip install bs4 requests`
-* Clone this repository and run `python tracker.py`
+* Download requirements using `pip install -r requirements.txt`
+* Clone this repository and run `python service.py`
