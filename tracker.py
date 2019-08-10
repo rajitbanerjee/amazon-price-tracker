@@ -1,22 +1,18 @@
 import string
 import time
-from datetime import datetime
 
 import requests
 from bs4 import BeautifulSoup
 
-from helper import getTime, inputDetails, login
+import helper
 
 
-def checkPrice(**data_dict):
+def checkPrice(data_dict):
     """
     Checks the price of the product and sends email if discount is sufficient.
 
     Parameter:
-    **data_dict (dict): Dictionary containing user data
-
-    Returns: 
-    data_dict (dict): Updated dictionary containing user data
+        data_dict (dict): Dictionary containing user data
     """
     headers = {}
     headers["User-Agent"] = data_dict["user_agent"]
@@ -43,25 +39,23 @@ def checkPrice(**data_dict):
 
     if data_dict["per_savings"] >= data_dict["discount"]:
         # send email if discount criteria is met
-        sendEmail(**data_dict)
+        sendEmail(data_dict)
     else:
-        login(data_dict["username"], data_dict["password"])
+        helper.login(data_dict["username"], data_dict["password"])
         print("\nSorry, the product isn't available at the desired price!")
         print("NAME:", data_dict["title"])
         print("CURRENT PRICE: GBP", data_dict["price"], "\n")
 
-    return data_dict
 
-
-def sendEmail(**data_dict):
+def sendEmail(data_dict):
     """
     Sends email from user's email ID to themself.
 
     Parameter:
-    **data_dict (dict): Dictionary containing user data
+        data_dict (dict): Dictionary containing user data
     """
     # login to email
-    server = login(data_dict["username"], data_dict["password"])
+    server = helper.login(data_dict["username"], data_dict["password"])
 
     # write the email subject and body
     subject = "PRICE DROP: \"" + \
@@ -85,18 +79,3 @@ def sendEmail(**data_dict):
     exit()
 
     server.quit()
-
-
-if __name__ == "__main__":
-    data_dict = inputDetails()
-    # get the frequency of price checks
-    s = getTime(data_dict["often"])
-
-    iters = 0  # counts the number of price checks done
-    while(True):
-        iters += 1
-        print("\nCheck #", iters, "on:", datetime.today())
-        # check if the price has dropped
-        data_dict = checkPrice(**data_dict)
-        print("Price will be checked every " + s)
-        time.sleep(data_dict["often"])
