@@ -18,7 +18,9 @@ def inputDetails():
         else:
             data_dict["user_agent"] = input("Enter your user agent (Google it!):\n")
             json_data["user_agent"] = data_dict["user_agent"]
-            json.dump(json_data, json_file)
+            json_file.seek(0)
+            json_file.truncate()
+            json.dump(json_data, json_file, indent=4, sort_keys=True)
 
         data_dict["URL"] = input("\nEnter product URL:\n")
         disc = ""
@@ -37,16 +39,18 @@ def inputDetails():
         # input username or load from json
         takeInput = False
         if "username" in json_data:
-            print("Gmail ID:", json_data["username"])
-            ch = input("Proceed? (y/ n")
+            print("\nGmail ID:", json_data["username"])
+            ch = input("Proceed? (y/ n): ")
             if ch in ['Y', 'y']:
                 data_dict["username"] = json_data["username"]
             else:
                 takeInput = True
-        elif "username" not in json_data or takeInput:
+        if takeInput or "username" not in json_data:
             data_dict["username"] = input("\nEnter your Gmail ID: ")
             json_data["username"] = data_dict["username"]
-            json.dump(json_data, json_file)
+            json_file.seek(0)
+            json_file.truncate()
+            json.dump(json_data, json_file, indent=4, sort_keys=True)
         # input password safely
         data_dict["password"] = getpass("Enter your password: ")
 
@@ -69,10 +73,10 @@ def login(username, password):
     try:
         server.login(username, password)
     except:
-        raise Exception("\n\nPlease ensure that either ONE of the following is complete:"
-                        "\n1. Enable Less Secure Apps on your Google Account"
-                        "\n2. Enable Two-Factor Authentication, and generate a new app password for Mail."
-                        "\n\nThen recheck your password and try again!")
+        print("\nPlease ensure that either ONE of the following is complete:"
+                "\n1. Enable Less Secure Apps on your Google Account"
+                "\n2. Enable Two-Factor Authentication, and generate a new app password for Mail."
+                "\n\nThen recheck your password and try again!")
     return server
 
 

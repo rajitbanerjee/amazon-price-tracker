@@ -58,7 +58,7 @@ def checkPrice(data_dict):
         sendEmail(data_dict)
     else:
         helper.login(data_dict["username"], data_dict["password"])
-        print("\nSorry, the product isn't available at the desired price!")
+        print("\nSorry, the product is currently not available at the desired price!")
         print("NAME:", data_dict["title"])
         print("CURRENT PRICE: GBP", data_dict["price"], "\n")
 
@@ -82,7 +82,7 @@ def sendEmail(data_dict):
 
     body = "The following product that you were interested in is now available at a discount!" +\
         "\n\nName: " + data_dict["title"] + \
-        "\nCurrent price: GBP" + str(data_dict["price"]) + \
+        "\nCurrent price: GBP " + str(data_dict["price"]) + \
         data_dict["savings"] + \
         "\nCheck out this link:\n" + data_dict["URL"]
 
@@ -94,6 +94,6 @@ def sendEmail(data_dict):
 
     # exit from loop in __main__ if email is sent
     print("...Email sent successfully!")
+    server.quit()
     exit()
 
-    server.quit()
